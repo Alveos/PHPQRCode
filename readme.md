@@ -23,7 +23,7 @@ Add the required module to your `composer.json` file:
 	              "name": "Alveos/phpqrcode",
 	              "version":"master",
 	              "source": {
-	                  "url": "https://github.com:Alveos/PHPQRCode.git",
+	                  "url": "git@github.com:Alveos/PHPQRCode.git",
 	                  "type": "git",
 	                  "reference":"master"
 	                }
