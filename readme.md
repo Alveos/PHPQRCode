@@ -9,9 +9,28 @@ Add the required module to your `composer.json` file:
     {
         "require": {
             ...
-            "Alveos/phpqrcode": "1.0.1"
+            "Alveos/phpqrcode": "master"
             ...
         }
+
+        ...
+
+	    "repositories": [
+	    	...
+	        {
+	            "type":"package",
+	            "package": {
+	              "name": "Alveos/phpqrcode",
+	              "version":"master",
+	              "source": {
+	                  "url": "https://github.com:Alveos/PHPQRCode.git",
+	                  "type": "git",
+	                  "reference":"master"
+	                }
+	            }
+	        }
+	        ...
+	    ]
     }
 
 Then run the command `composer update`.
