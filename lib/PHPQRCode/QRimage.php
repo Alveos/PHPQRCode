@@ -67,7 +67,7 @@ class QRimage {
 
         $image->drawImage($draw);
         $image->borderImage($col[0],$outerFrame,$outerFrame);
-        $image->scaleImage( $imgW * $pixelPerPoint, 0 );
+        $image->scaleImage( ($imgW + 2*$outerFrame) * $pixelPerPoint, 0 );
 
         if($save){
             if($filename === false){

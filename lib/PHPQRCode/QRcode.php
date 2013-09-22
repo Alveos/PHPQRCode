@@ -145,7 +145,7 @@ class QRcode {
     public static function jpg($text, $outfile = false, $level = Constants::QR_ECLEVEL_L, $size = 3, $margin = 4, $q = 85, $save = true, $print=false)
     {
         $enc = QRencode::factory($level, $size, $margin);
-        return $enc->encodePNG($text, $outfile, $q, $save, $print);
+        return $enc->encodeJPG($text, $outfile, $q, $save, $print);
     }
 
 
