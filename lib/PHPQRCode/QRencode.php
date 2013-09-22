@@ -113,7 +113,7 @@ class QRencode {
     }
 
     //----------------------------------------------------------------------
-    public function encodePNG($intext, $outfile = false,$saveandprint=false)
+    public function encodePNG($intext, $outfile = false, $save = true, $print=false)
     {
         try {
             ob_start();
@@ -126,7 +126,30 @@ class QRencode {
 
             $maxSize = (int)(Constants::QR_PNG_MAXIMUM_SIZE / (count($tab)+2*$this->margin));
 
-            QRimage::png($tab, $outfile, min(max(1, $this->size), $maxSize), $this->margin,$saveandprint);
+            QRimage::png($tab, $outfile, min(max(1, $this->size), $maxSize), $this->margin,$save,$print);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            die();
+
+            QRtools::log($outfile, $e->getMessage());
+        }
+    }
+
+    //----------------------------------------------------------------------
+    public function encodeJPG($intext, $outfile = false, $q= 85, $save = true, $print=false)
+    {
+        try {
+            ob_start();
+            $tab = $this->encode($intext);
+            $err = ob_get_contents();
+            ob_end_clean();
+
+            if ($err != '')
+                QRtools::log($outfile, "ERROR: " . $err);
+
+            $maxSize = (int)(Constants::QR_PNG_MAXIMUM_SIZE / (count($tab)+2*$this->margin));
+
+            QRimage::jpg($tab, $outfile, min(max(1, $this->size), $maxSize), $this->margin, $q, $save,$print);
         } catch (Exception $e) {
             echo $e->getMessage();
             die();

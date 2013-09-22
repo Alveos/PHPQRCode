@@ -26,70 +26,59 @@ namespace PHPQRCode;
 
 class QRimage {
 
+
     //----------------------------------------------------------------------
-    public static function png($frame, $filename = false, $pixelPerPoint = 4, $outerFrame = 4,$saveandprint=FALSE)
+    public static function png($frame, $filename = false, $pixelPerPoint = 4, $outerFrame = 4,$save = TRUE, $print = false) 
     {
-        $image = self::image($frame, $pixelPerPoint, $outerFrame);
-
-        if ($filename === false) {
-            Header("Content-type: image/png");
-            ImagePng($image);
-        } else {
-            if($saveandprint===TRUE){
-                ImagePng($image, $filename);
-                header("Content-type: image/png");
-                ImagePng($image);
-            }else{
-                ImagePng($image, $filename);
-            }
-        }
-
-        ImageDestroy($image);
+        $image = self::image($frame, $pixelPerPoint, $outerFrame, "png", 85, $filename, $save, $print);
     }
 
     //----------------------------------------------------------------------
-    public static function jpg($frame, $filename = false, $pixelPerPoint = 8, $outerFrame = 4, $q = 85)
+    public static function jpg($frame, $filename = false, $pixelPerPoint = 8, $outerFrame = 4, $q = 85,$save = TRUE, $print = false) 
     {
-        $image = self::image($frame, $pixelPerPoint, $outerFrame);
-
-        if ($filename === false) {
-            Header("Content-type: image/jpeg");
-            ImageJpeg($image, null, $q);
-        } else {
-            ImageJpeg($image, $filename, $q);
-        }
-
-        ImageDestroy($image);
+        $image = self::image($frame, $pixelPerPoint, $outerFrame, "jpeg", $q, $filename, $save, $print);
     }
 
     //----------------------------------------------------------------------
-    private static function image($frame, $pixelPerPoint = 4, $outerFrame = 4)
+    private static function image($frame, $pixelPerPoint = 4, $outerFrame = 4, $format = "png", $quality = 85, $filename = FALSE, $save = TRUE, $print = false) 
     {
-        $h = count($frame);
-        $w = strlen($frame[0]);
+        $imgH = count($frame);
+        $imgW = strlen($frame[0]);
 
-        $imgW = $w + 2*$outerFrame;
-        $imgH = $h + 2*$outerFrame;
+        $col[0] = new \ImagickPixel("white");
+        $col[1] = new \ImagickPixel("black");
 
-        $base_image =ImageCreate($imgW, $imgH);
+        $image = new \Imagick();
+        $image->newImage($imgW, $imgH, $col[0]);
 
-        $col[0] = ImageColorAllocate($base_image,255,255,255);
-        $col[1] = ImageColorAllocate($base_image,0,0,0);
+        $image->setCompressionQuality($quality);
+        $image->setImageFormat($format); 
 
-        imagefill($base_image, 0, 0, $col[0]);
+        $draw = new \ImagickDraw();
+        $draw->setFillColor($col[1]);
 
-        for($y=0; $y<$h; $y++) {
-            for($x=0; $x<$w; $x++) {
+        for($y=0; $y<$imgH; $y++) {
+            for($x=0; $x<$imgW; $x++) {
                 if ($frame[$y][$x] == '1') {
-                    ImageSetPixel($base_image,$x+$outerFrame,$y+$outerFrame,$col[1]);
+                    $draw->point($x,$y); 
                 }
             }
         }
 
-        $target_image =ImageCreate($imgW * $pixelPerPoint, $imgH * $pixelPerPoint);
-        ImageCopyResized($target_image, $base_image, 0, 0, 0, 0, $imgW * $pixelPerPoint, $imgH * $pixelPerPoint, $imgW, $imgH);
-        ImageDestroy($base_image);
+        $image->drawImage($draw);
+        $image->borderImage($col[0],$outerFrame,$outerFrame);
+        $image->scaleImage( $imgW * $pixelPerPoint, 0 );
 
-        return $target_image;
-    }
+        if($save){
+            if($filename === false){
+                throw new Exception("QR Code filename can't be empty");
+            }
+            $image->writeImages($filename, true); 
+        }
+
+        if($print){
+                Header("Content-type: image/" . $format);
+                echo $image;
+        }
+    }    
 }

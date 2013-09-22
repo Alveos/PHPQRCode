@@ -136,11 +136,18 @@ class QRcode {
     }
 
     //----------------------------------------------------------------------
-    public static function png($text, $outfile = false, $level = Constants::QR_ECLEVEL_L, $size = 3, $margin = 4, $saveandprint=false)
+    public static function png($text, $outfile = false, $level = Constants::QR_ECLEVEL_L, $size = 3, $margin = 4, $save = true, $print=false)
     {
         $enc = QRencode::factory($level, $size, $margin);
-        return $enc->encodePNG($text, $outfile, $saveandprint=false);
+        return $enc->encodePNG($text, $outfile, $save, $print);
     }
+
+    public static function jpg($text, $outfile = false, $level = Constants::QR_ECLEVEL_L, $size = 3, $margin = 4, $q = 85, $save = true, $print=false)
+    {
+        $enc = QRencode::factory($level, $size, $margin);
+        return $enc->encodePNG($text, $outfile, $q, $save, $print);
+    }
+
 
     //----------------------------------------------------------------------
     public static function text($text, $outfile = false, $level = Constants::QR_ECLEVEL_L, $size = 3, $margin = 4)
